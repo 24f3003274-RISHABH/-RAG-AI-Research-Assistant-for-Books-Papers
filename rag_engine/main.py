@@ -1,7 +1,5 @@
-import os
 import sys
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+import ollama
 from utils import (
     load_pdfs,
     split_documents,
@@ -9,38 +7,31 @@ from utils import (
     load_vector_store
 )
 
-# Load environment variables from .env
-load_dotenv()
-
-# Paths
+# Paths for PDFs and FAISS vector store
 DATA_PATH = "data"
 VECTOR_STORE_PATH = "vector_store"
 
-# Initialize OpenAI LLM
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-
-# Build the FAISS vector database
+# ---------------------------------------------------------
+# Function: build_rag
+# Loads PDFs, splits them into chunks, and creates FAISS index.
+# ---------------------------------------------------------
 def build_rag():
     print("Loading PDFs...")
 
-    # Load all PDFs
     documents = load_pdfs(DATA_PATH)
-
     print(f"Loaded {len(documents)} pages")
 
-    # Split into chunks
     chunks = split_documents(documents)
-
     print(f"Created {len(chunks)} chunks")
 
-    # Create and save FAISS vector store
     create_vector_store(chunks, VECTOR_STORE_PATH)
-
     print("FAISS vector store created successfully!")
 
-# Retrieve top-k relevant chunks
+# ---------------------------------------------------------
+# Function: retrieve
+# Retrieves top-k relevant chunks for a query.
+# ---------------------------------------------------------
 def retrieve(query, k=3):
-    # Load vector store
     vector_store = load_vector_store(VECTOR_STORE_PATH)
 
     # Search for similar chunks
@@ -48,19 +39,22 @@ def retrieve(query, k=3):
 
     return results
 
-# Generate answer using retrieved chunks
+# ---------------------------------------------------------
+# Function: generate_answer
+# Uses retrieved chunks + Llama 3 to generate an answer.
+# ---------------------------------------------------------
 def generate_answer(query):
-    # Retrieve relevant chunks
     docs = retrieve(query)
 
-    # Combine retrieved text
+    # Combine retrieved chunks into context
     context = "\n\n".join([doc.page_content for doc in docs])
 
-    # Create RAG prompt
+    # Create the RAG prompt
     prompt = f"""
 You are an AI Research Assistant.
 
-Use the following context from books and research papers to answer the question accurately.
+Use the following context from books and research papers
+to answer the question accurately.
 
 Context:
 {context}
@@ -71,21 +65,28 @@ Question:
 Answer:
 """
 
-    # Send prompt to LLM
-    response = llm.invoke(prompt)
+    # Send the prompt to Ollama (Llama 3)
+    response = ollama.chat(
+        model="llama3",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
 
     return {
-        "answer": response.content,
+        "answer": response["message"]["content"],
         "references": [doc.page_content[:300] for doc in docs]
     }
 
+# ---------------------------------------------------------
 # Command-line execution
+# ---------------------------------------------------------
 if __name__ == "__main__":
-    # If user passes --build, create the FAISS database
+    # Build the FAISS index
     if len(sys.argv) > 1 and sys.argv[1] == "--build":
         build_rag()
 
-    # Otherwise, answer the query
+    # Answer a query
     elif len(sys.argv) > 1:
         query = " ".join(sys.argv[1:])
 
@@ -101,4 +102,4 @@ if __name__ == "__main__":
     else:
         print("Usage:")
         print("python main.py --build")
-        print("python main.py explain datatypes in c library")
+        print("python main.py <your question>")

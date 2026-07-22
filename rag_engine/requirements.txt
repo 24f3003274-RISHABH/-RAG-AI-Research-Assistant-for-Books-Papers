@@ -1,7 +1,7 @@
 langchain
 langchain-community
-langchain-openai
 faiss-cpu
 pypdf
 sentence-transformers
+ollama
 python-dotenv
