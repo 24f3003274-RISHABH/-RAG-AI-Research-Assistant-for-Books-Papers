@@ -1,4 +1,5 @@
 import sys
+import os
 import ollama
 from utils import (
     load_pdfs,
@@ -7,9 +8,10 @@ from utils import (
     load_vector_store
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Paths for PDFs and FAISS vector store
-DATA_PATH = "data"
-VECTOR_STORE_PATH = "vector_store"
+DATA_PATH = os.path.join(BASE_DIR, "data")
+VECTOR_STORE_PATH = os.path.join(BASE_DIR, "vector_store")
 
 # ---------------------------------------------------------
 # Function: build_rag
@@ -82,22 +84,22 @@ Answer:
 # Command-line execution
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    # Build the FAISS index
+    # Force UTF-8 encoding for Windows console
+    import sys
+    sys.stdout.reconfigure(encoding='utf-8')
+
+    # If user passes --build, create the FAISS database
     if len(sys.argv) > 1 and sys.argv[1] == "--build":
         build_rag()
 
-    # Answer a query
+    # Otherwise, answer the query
     elif len(sys.argv) > 1:
         query = " ".join(sys.argv[1:])
 
         result = generate_answer(query)
 
-        print("\nAnswer:\n")
+        # Print only the answer (safe for backend)
         print(result["answer"])
-
-        print("\nReferences:\n")
-        for ref in result["references"]:
-            print("-", ref)
 
     else:
         print("Usage:")

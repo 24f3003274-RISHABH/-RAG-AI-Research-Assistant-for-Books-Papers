@@ -1,0 +1,36 @@
+# Node.js
+backend/node_modules/
+frontend/node_modules/
+
+# React build
+frontend/dist/
+
+# Python virtual environments
+rag_engine/.venv/
+rag_engine/venv/
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+rag_engine/.env
+
+# FAISS vector database
+rag_engine/vector_store/
+
+# Uploaded PDFs
+rag_engine/data/
+backend/uploads/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
