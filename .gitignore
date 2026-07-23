@@ -34,3 +34,6 @@ backend/uploads/
 # OS files
 .DS_Store
 Thumbs.db
+
+.venv/
+.venv-1/
