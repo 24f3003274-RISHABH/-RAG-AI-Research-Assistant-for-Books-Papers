@@ -57,7 +57,8 @@ router.post("/", upload.single("pdf"), (req, res) => {
 
     const pythonProcess = spawn("python", [
       pythonScript,
-      "--build",
+      "--add",
+      destinationPath,
     ]);
 
     let pythonError = "";

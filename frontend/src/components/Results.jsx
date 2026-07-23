@@ -1,13 +1,18 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function Results({ message }) {
   return (
     <div className={`message ${message.sender}`}>
-      <strong>
+      <strong className="sender">
         {message.sender === "user" ? "You:" : "AI:"}
       </strong>
 
-      <p>{message.text}</p>
+      {/* Render Markdown properly */}
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {message.text}
+      </ReactMarkdown>
     </div>
   );
 }

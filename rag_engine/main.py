@@ -55,8 +55,16 @@ def generate_answer(query):
     prompt = f"""
 You are an AI Research Assistant.
 
-Use the following context from books and research papers
-to answer the question accurately.
+Use the following context from books and research papers to answer the question accurately.
+
+Format the answer in clean Markdown like ChatGPT:
+- Start with a short introduction.
+- Use clear headings (##).
+- Use bullet points or numbered lists where appropriate.
+- Bold important terms using **bold**.
+- Add spacing between paragraphs.
+- Keep the answer well-structured and easy to read.
+- Do not mention "Based on the context provided" unless necessary.
 
 Context:
 {context}
@@ -79,7 +87,35 @@ Answer:
         "answer": response["message"]["content"],
         "references": [doc.page_content[:300] for doc in docs]
     }
+def add_new_pdf(pdf_path):
+    """
+    Add only the newly uploaded PDF to the existing FAISS index.
+    This avoids rebuilding the entire database.
+    """
 
+    from langchain_community.document_loaders import PyPDFLoader
+
+    print(f"Processing new PDF: {pdf_path}")
+
+    # Load only the new PDF
+    loader = PyPDFLoader(pdf_path)
+    documents = loader.load()
+
+    # Split into chunks
+    chunks = split_documents(documents)
+
+    print(f"Created {len(chunks)} chunks from new PDF")
+
+    # Load existing FAISS vector store
+    vector_store = load_vector_store(VECTOR_STORE_PATH)
+
+    # Add new chunks
+    vector_store.add_documents(chunks)
+
+    # Save updated vector store
+    vector_store.save_local(VECTOR_STORE_PATH)
+
+    print("New PDF added to FAISS successfully!")
 # ---------------------------------------------------------
 # Command-line execution
 # ---------------------------------------------------------
@@ -100,6 +136,9 @@ if __name__ == "__main__":
 
         # Print only the answer (safe for backend)
         print(result["answer"])
+    elif len(sys.argv) > 2 and sys.argv[1] == "--add":
+      pdf_path = sys.argv[2]
+      add_new_pdf(pdf_path)
 
     else:
         print("Usage:")

@@ -126,3 +126,92 @@ body {
 .input-container button:hover {
   background: #0ea5e9;
 }
+
+
+
+/* Chat Messages */
+.message {
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  max-width: 85%;
+  line-height: 1.7;
+  font-size: 16px;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background: #2563eb;
+  margin-left: auto;
+  text-align: left;
+  color: white;
+}
+
+.message.ai {
+  background: #334155;
+  margin-right: auto;
+  color: #f8fafc;
+}
+
+.sender {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Markdown Styling */
+.message.ai h1,
+.message.ai h2,
+.message.ai h3 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.message.ai h1 {
+  font-size: 26px;
+}
+
+.message.ai h2 {
+  font-size: 22px;
+}
+
+.message.ai h3 {
+  font-size: 19px;
+}
+
+.message.ai p {
+  margin-bottom: 14px;
+}
+
+.message.ai ul,
+.message.ai ol {
+  margin-left: 22px;
+  margin-bottom: 14px;
+}
+
+.message.ai li {
+  margin-bottom: 8px;
+}
+
+.message.ai strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.message.ai code {
+  background: #1e293b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.message.ai pre {
+  background: #0f172a;
+  padding: 14px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
